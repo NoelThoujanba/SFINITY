@@ -8,8 +8,6 @@ import os
 
 from sys import argv
 
-IsPlaying = False
-
 MUSIC_DIR = "music/"
 
 command_prefix='.'
