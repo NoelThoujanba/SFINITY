@@ -115,6 +115,43 @@ async def start_playlist(context, name):
     else:
         await context.send('User is not in a channel.')
 
+@bot.command(name="ShufflePlaylist", pass_context=True)
+async def shuffle_playlist(context, name):  
+    if not os.path.isdir(MUSIC_DIR+name):
+        await context.send("Playlist does not exist")
+        return
+
+
+    # grab the user who sent the command
+    user=context.message.author
+    voice_channel=user.voice.channel
+    # only play music if user is in a voice channel
+    if voice_channel!= None:
+        # grab user's voice channel
+        channel=voice_channel.name
+        await context.send('User is in channel: '+ channel)
+        # create StreamPlayer
+        vc= await voice_channel.connect()
+
+        files = glob.glob(MUSIC_DIR+name+"/*")
+        song_queue = list(files)
+        random.shuffle(song_queue)
+        print(f"Shuffled: {song_queue}")
+        msg = ""
+        for file in files:
+            msg = msg + file + '\n'
+        await context.send(msg)
+        for file in files:
+            vc.play(discord.FFmpegPCMAudio(file, executable=FFMPEGPath), after=lambda e: play_next(context, song_queue))
+        # disconnect after the player has finished
+        #TODO: 
+        
+
+
+    else:
+        await context.send('User is not in a channel.')
+
+
 @bot.command(name="DisplayPlaylist", pass_context=True)
 async def display_playlist(context, name):
     if not os.path.isdir(MUSIC_DIR+name):
