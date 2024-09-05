@@ -1,11 +1,13 @@
-from pytube import YouTube
-from pytube import Playlist
+from pytubefix import YouTube
+from pytubefix import Playlist
+
+import re
 
 from sys import argv
 import os
 import subprocess
 
-def DownloadVidYT(url: str, save_dir: str, filename: str) -> str: #to return err log
+def DownloadAudioYT(url: str, save_dir: str, filename: str) -> str: #to return err log
     try: 
         # object creation using YouTube 
         yt = YouTube(url)
@@ -31,14 +33,24 @@ def DownloadVidYT(url: str, save_dir: str, filename: str) -> str: #to return err
         print(f'{filename} with url = {url} ,operation failed')
         return f'{filename} with url = {url} ,operation failed'
     
-def DownloadMusicPlaylistSpotify(url: str, save_dir: str):
-    with open("command.bat", 'w') as cmd:
-        cmd.write(
-            f"cd {save_dir}\nspotdl {url}"
-        )
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-    subprocess.check_call("command.bat")
+def DownloadYTPlaylist(url: str, save_dir):
+    
+    YT_STREAM_AUDIO='140'
+
+    playlist = Playlist(url)
+
+    # this fixes the empty playlist.videos list, becase yy got updated
+    playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
+
+    print(len(playlist.video_urls))
+
+    for url in playlist.video_urls:
+        print(url)
+
+    # physically downloading the audio track
+    for video in playlist.videos:
+        audioStream = video.streams.get_by_itag(YT_STREAM_AUDIO)
+        audioStream.download(output_path=save_dir)
 
 
 def GetElementHavingSubString(data: list[str], sstr: str) -> int:
@@ -50,7 +62,7 @@ def GetElementHavingSubString(data: list[str], sstr: str) -> int:
 
 def main(args: list[str]):
     if len(args) != 4:
-        print(f"Syntax: {args[0]}  --url=<url> --dir=<save_path> --mode='spotify/youtube' --filename=<filename> or --playlist")
+        print(f"Syntax: python {args[0]}  --url=<url> --dir=<save_path> --filename=<filename> or --playlist")
         return
 
     urlIndex = GetElementHavingSubString(args, "--url=")
@@ -59,17 +71,22 @@ def main(args: list[str]):
         filenameIndex = GetElementHavingSubString(args, "--filename=")
         filename = args[filenameIndex].replace("--filename=", "")
     except ValueError:
-        GetElementHavingSubString(args, "--playlist")
+        _ = GetElementHavingSubString(args, "--playlist")
         playlistMode = True
     else:
         playlistMode = False
-        
+
     url = args[urlIndex].replace("--url=", "")
     dir = args[dirIndex].replace("--dir=", "")
-    
+        
+    if playlistMode:
 
-    if playlistMode: DownloadMusicPlaylistSpotify(url, dir)
-    else: DownloadVidYT(url, dir, filename)
+        if not os.path.isdir(dir):
+            os.mkdir(dir)
+
+        DownloadYTPlaylist(url, dir)
+    else:
+        DownloadAudioYT(url, dir, filename)
 
 
 if __name__ == "__main__":
