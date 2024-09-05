@@ -221,21 +221,6 @@ async def on_command_error(context, error):
 
     print(f'Error: {error}')
 
-@bot.event
-async def on_member_join(member):
-    await member.send('Please be advised, the bot logs mesages on the server for moderation purposes.')
-
-
-
-@bot.event
-async def on_message(message):
-    no_log = "--nolog"
-    if not no_log in argv:
-        with open("msglog.txt", "a") as msglog:
-            msglog.write(f"name = {message.author.name}, id = {message.author.id}, time = {message.created_at}, guild = {message.guild}: {message.content}\n")
-    await bot.process_commands(message)
-
-
 
 def main():
     token = input("TOKEN: ")
