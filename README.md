@@ -1,4 +1,4 @@
-Under Fair use section 52 of Indian law, copyrighted materials may be used for personal purposes. So as a result, we will <b>NOT BE MONETIZING</b> this bot. The music component of this bot will renain free and open source.
+Under Fair use section 52 of Indian copyright act, copyrighted materials may be used for personal purposes. So as a result, we will <b>NOT BE MONETIZING</b> this bot. The music component of this bot will renain free and open source.
 <br><br>
 
 Instructuons:
