@@ -1,5 +1,5 @@
 Instructuons:
-Create a file .ffmpegpth and write down the install path of ffmpeg on you system.
+Create a file 'ffmpegpath' and write down the install path of ffmpeg on you system.
 create a folder called music.
 
 dependencies:
