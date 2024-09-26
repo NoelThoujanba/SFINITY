@@ -14,3 +14,6 @@ run:
 python main.py<br>
 
 enter you discord token when prompted.
+
+
+TODO: UPDATE README LATER. MAJOR FEATURE OVERHAUL
